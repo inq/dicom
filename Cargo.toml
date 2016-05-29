@@ -1,0 +1,6 @@
+[package]
+name = "dicom"
+version = "0.1.0"
+authors = ["inkyu <gofiri@gmail.com>"]
+
+[dependencies]
