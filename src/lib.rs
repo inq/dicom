@@ -4,7 +4,7 @@ use self::dicom::Dicom;
 
 #[test]
 fn it_works() {
-    let x = Dicom::new("data/dicom1.dcm");
+    let x = Dicom::new("data/test.dcm");
     println!("{:?}", x);
 }
 
