@@ -19,6 +19,10 @@ impl Reader {
         self.file.seek(SeekFrom::Start(offset));
     }
 
+    pub fn tell(&mut self) -> Result<u64, String> {
+        self.file.seek(SeekFrom::Current(0)).map_err(|e| e.to_string())
+    }
+
     pub fn read_str(&mut self, size: usize) -> Result<String, String> {
         let mut buf = vec![0; size];
         try!(self.file.read(&mut buf).map_err(|e| e.to_string()));
