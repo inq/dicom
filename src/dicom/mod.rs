@@ -1,6 +1,9 @@
 mod reader;
+mod data;
+mod tag;
 
 use self::reader::Reader;
+use self::tag::Tag;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io;
@@ -16,6 +19,8 @@ impl Dicom {
         let mut reader = try!(Reader::new(file_name));
         reader.seek(128);        
         assert_eq!(try!(reader.read_str(4)), "DICM");
+        let metadata = try!(reader.read_data());
+        println!("{:?}", metadata.read_u32s());
 
         Ok(Dicom { file_name: file_name })
     }
