@@ -7,13 +7,15 @@ use std::io::SeekFrom;
 use std::collections::HashMap;
 
 pub struct Reader {
-    file: File
+    file: File,
+    size: u64
 }
 
 impl Reader {
     pub fn new(file_name: String) -> Result<Reader, String> {
-        let file = try!(File::open(file_name).map_err(|e| e.to_string()));
-        Ok(Reader{file: file})
+        let mut file = try!(File::open(file_name).map_err(|e| e.to_string()));
+        let size = try!(file.seek(SeekFrom::End(0)).map_err(|e| e.to_string()));
+        Ok(Reader{file: file, size: size})
     }
 
     fn seek(&mut self, offset: u64) {
@@ -84,7 +86,8 @@ impl Reader {
         let mut is_other_vr = false; // OX OW OB OF
 
         if tag.group == 0xfffe { // item group
-            
+            value_length = try!(self.read_u32()) as usize;
+            println!("ITEM GROUP");
         } else {
             value_repr = try!(self.read_str(2));
             is_other_vr = value_repr.as_bytes()[0] == ('O' as u8);
@@ -106,9 +109,27 @@ impl Reader {
             _ => 1
         };
 
+        if value_length == 0xffffffff {
+            value_length = 0;
+        }
+
         let data = try!(self.read_u8s(value_length as usize));
 
         Ok(Data::new(tag, value_repr, value_length, data))
+    }
+
+    pub fn read_content(&mut self) -> Result<(), String> {
+        let mut i = 0;
+        while try!(self.tell()) < self.size {
+            let data_elem = try!(self.read_data());
+            println!("{}", data_elem.to_string());
+
+            i = i + 1;
+            if i > 500 {
+                break;
+            }
+        }
+        Ok(())
     }
 
     pub fn read_metadata(&mut self) -> Result<HashMap<String, Data>, String> {

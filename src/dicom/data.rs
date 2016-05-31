@@ -28,7 +28,7 @@ impl Data {
         Ok(res)
     }
 
-    pub fn to_string(&self) -> Result<String, String> {
-        String::from_utf8(self.data.clone()).map_err(|e| e.to_string())
+    pub fn to_string(&self) -> String {
+        format!("{:?}, {}, {}", self.tag, self.value_repr, self.value_length)
     }
 }

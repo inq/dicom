@@ -7,6 +7,6 @@ pub struct Tag {
 
 impl Tag {
     pub fn new(group: u16, element: u16) -> Tag {
-        Tag { group: group, element: element, name: format!("{0:02x}{1:02x}", group, element) }
+        Tag { group: group, element: element, name: format!("{0:04x}{1:04x}", group, element) }
     }
 }
