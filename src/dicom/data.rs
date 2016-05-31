@@ -1,20 +1,20 @@
-use std::any::Any;
-use std::mem;
+use super::tag::Tag;
 
 #[derive(Debug)]
 pub struct Data {
+    pub tag: Tag,
     pub value_repr: String,
     pub value_length: usize,
     pub data: Vec<u8>
 }
 
 impl Data {
-    pub fn new(value_repr: String, value_length: usize, data: Vec<u8>)
+    pub fn new(tag: Tag, value_repr: String, value_length: usize, data: Vec<u8>)
                -> Data {
-        Data { value_repr: value_repr, value_length: value_length, data: data }
+        Data { tag: tag, value_repr: value_repr, value_length: value_length, data: data }
     }
 
-    pub fn read_u32s(&self) -> Result<Vec<u32>, String> {
+    pub fn to_u32s(&self) -> Result<Vec<u32>, String> {
         if self.value_length % 4 != 0 {
             return Err(String::from("Size mismatch"));
         }
@@ -26,5 +26,9 @@ impl Data {
                 | (self.data[i * 4] as u32)
         }
         Ok(res)
+    }
+
+    pub fn to_string(&self) -> Result<String, String> {
+        String::from_utf8(self.data.clone()).map_err(|e| e.to_string())
     }
 }
