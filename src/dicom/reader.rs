@@ -11,7 +11,7 @@ pub struct Reader {
 }
 
 impl Reader {
-    pub fn new(file_name: &'static str) -> Result<Reader, String> {
+    pub fn new(file_name: String) -> Result<Reader, String> {
         let file = try!(File::open(file_name).map_err(|e| e.to_string()));
         Ok(Reader{file: file})
     }
